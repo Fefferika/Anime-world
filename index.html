@@ -195,6 +195,40 @@ function plainDescription(text) {
     .trim();
 }
 
+  
+const translationCache = new Map();
+
+async function translateToItalian(text) {
+  const original = plainDescription(text).slice(0, 450);
+
+  if (!original) return "Descrizione non disponibile.";
+  if (translationCache.has(original)) {
+    return translationCache.get(original);
+  }
+
+  try {
+    const url =
+      "https://api.mymemory.translated.net/get?q=" +
+      encodeURIComponent(original) +
+      "&langpair=en|it";
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const translated = data.responseData?.translatedText;
+
+    if (translated) {
+      translationCache.set(original, translated);
+      return translated;
+    }
+  } catch (error) {
+    console.log("Traduzione temporaneamente non disponibile.");
+  }
+
+  return original;
+}
+
+
 async function loadAnime(reset = false) {
   if (loading) return;
   if (reset) {
@@ -233,6 +267,13 @@ async function loadAnime(reset = false) {
 
     const result = data.data.Page;
     const items = result.media || [];
+    
+await Promise.all(items.map(async (anime) => {
+  if (anime.description) {
+    anime.description = await translateToItalian(anime.description);
+  }
+}));
+
     hasMore = result.pageInfo.hasNextPage;
     allAnime = reset ? items : allAnime.concat(items);
 
