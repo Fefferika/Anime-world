@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yoru Anime | Il tuo mondo anime</title>
+  <meta name="description" content="Scopri il tuo prossimo anime, esplora i generi e trova la tua prossima storia preferita.">
+  <style>
+    :root {
+      --bg: #0b0912;
+      --panel: #171323;
+      --purple: #a78bfa;
+      --pink: #edb8ff;
+      --text: #f7f2ff;
+      --muted: #b5abc9;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 7%;
+      border-bottom: 1px solid #ffffff12;
+    }
+
+    .logo {
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .logo span { color: var(--purple); }
+
+    nav { display: flex; gap: 20px; flex-wrap: wrap; }
+
+    a { color: var(--muted); text-decoration: none; }
+    nav a:hover { color: var(--pink); }
+
+    .hero {
+      text-align: center;
+      padding: 90px 20px 75px;
+      background:
+        radial-gradient(ellipse at 50% 0%, #7544b544, transparent 65%),
+        linear-gradient(180deg, #151020, var(--bg));
+    }
+
+    .eyebrow {
+      color: var(--pink);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-size: 12px;
+    }
+
+    h1 {
+      font-size: clamp(40px, 8vw, 76px);
+      line-height: 1.08;
+      margin: 22px auto;
+      max-width: 850px;
+    }
+
+    h1 span {
+      color: var(--purple);
+      text-shadow: 0 0 35px #a78bfa55;
+    }
+
+    .hero p {
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 28px;
+      line-height: 1.8;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 13px 22px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--purple);
+      color: #160d26;
+      font-size: 15px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    .button.secondary {
+      background: #ffffff0d;
+      color: var(--text);
+      border: 1px solid #ffffff20;
+    }
+
+    section { padding: 55px 7%; }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    h2 { font-size: 28px; margin: 0 0 8px; }
+    .subtitle { color: var(--muted); margin: 0; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      overflow: hidden;
+      border: 1px solid #ffffff12;
+      border-radius: 15px;
+      background: var(--panel);
+      transition: transform .2s, border-color .2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: #a78bfa88;
+    }
+
+    .poster {
+      min-height: 155px;
+      display: grid;
+      place-items: center;
+      font-size: 48px;
+      background: linear-gradient(145deg, #392254, #171323 75%);
+    }
+
+    .card-body { padding: 15px; }
+    .card h3 { margin: 0 0 7px; font-size: 16px; }
+    .card p { margin: 0; color: var(--muted); font-size: 13px; }
+
+    .tag {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 5px 9px;
+      border-radius: 20px;
+      background: #a78bfa20;
+      color: var(--pink);
+      font-size: 11px;
+    }
+
+    .quiz-box {
+      max-width: 700px;
+      margin: auto;
+      padding: 30px;
+      background: var(--panel);
+      border: 1px solid #a78bfa40;
+      border-radius: 18px;
+    }
+
+    .quiz-box > p { color: var(--muted); line-height: 1.7; }
+
+    .choices { display: grid; gap: 12px; margin: 22px 0; }
+
+    .choice {
+      text-align: left;
+      padding: 15px;
+      color: var(--text);
+      background: #ffffff08;
+      border: 1px solid #ffffff20;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .choice:hover, .choice.selected {
+      border-color: var(--purple);
+      background: #a78bfa18;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 10px;
+      background: #a78bfa14;
+      line-height: 1.7;
+    }
+
+    footer {
+      padding: 28px 7%;
+      text-align: center;
+      color: var(--muted);
+      border-top: 1px solid #ffffff12;
+      font-size: 13px;
+    }
+
+    @media (max-width: 520px) {
+      header { align-items: flex-start; flex-direction: column; }
+      .hero { padding-top: 65px; }
+      section { padding: 42px 5%; }
+      .quiz-box { padding: 21px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">YORU<span>ANIME</span> ✦</div>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#catalogo">Catalogo</a>
+      <a href="#quiz">Anime quiz</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="eyebrow">✦ Il tuo prossimo mondo ti aspetta ✦</div>
+      <h1>Ogni anime è una<br><span>nuova emozione.</span></h1>
+      <p>
+        Storie che fanno battere il cuore, personaggi indimenticabili
+        e universi in cui perdersi. Trova qui la tua prossima avventura.
+      </p>
+      <a class="button" href="#catalogo">Esplora gli anime ✦</a>
+      <a class="button secondary" href="#quiz">Trova il tuo anime</a>
+    </section>
+
+    <section id="catalogo">
+      <div class="section-heading">
+        <div>
+          <h2>Il tuo universo anime</h2>
+          <p class="subtitle">Una piccola selezione per iniziare.</p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <article class="card">
+          <div class="poster">🌸</div>
+          <div class="card-body">
+            <h3>Fruits Basket</h3>
+            <p>Amore · Drama · Fantasy</p>
+            <span class="tag">Emozionante</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="poster">🌌</div>
+          <div class="card-body">
+            <h3>Violet Evergarden</h3>
+            <p>Drama · Fantasy</p>
+            <span class="tag">Intenso</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="poster">💜</div>
+          <div class="card-body">
+            <h3>Horimiya</h3>
+            <p>Romance · Slice of life</p>
+            <span class="tag">Romantico</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="poster">🌙</div>
+          <div class="card-body">
+            <h3>Violet Night</h3>
+            <p>Mistero · Fantasy</p>
+            <span class="tag">Da esplorare</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="quiz">
+      <div class="quiz-box">
+        <div class="eyebrow">Anime finder</div>
+        <h2>Che anime fa per te?</h2>
+        <p>Scegli l'atmosfera che hai voglia di vivere oggi.</p>
+
+        <div class="choices">
+          <button class="choice" data-result="romance">
+            💗 Una storia romantica che mi faccia emozionare
+          </button>
+          <button class="choice" data-result="action">
+            ⚔️ Avventura, combattimenti e colpi di scena
+          </button>
+          <button class="choice" data-result="drama">
+            🌙 Una storia intensa e piena di significato
+          </button>
+          <button class="choice" data-result="fantasy">
+            ✨ Magia, mondi fantastici e meraviglia
+          </button>
+        </div>
+
+        <div id="result" hidden aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Yoru Anime ✦ Un piccolo universo dedicato a chi ama gli anime.
+  </footer>
+
+  <script>
+    const recommendations = {
+      romance: {
+        title: "Horimiya",
+        text: "Una storia romantica dolce e divertente, tra sentimenti, amicizia e vita quotidiana."
+      },
+      action: {
+        title: "Fullmetal Alchemist: Brotherhood",
+        text: "Un'avventura ricca di misteri, combattimenti e personaggi indimenticabili."
+      },
+      drama: {
+        title: "Violet Evergarden",
+        text: "Una storia intensa che esplora i sentimenti e il significato delle parole."
+      },
+      fantasy: {
+        title: "Frieren: Beyond Journey's End",
+        text: "Un viaggio magico e malinconico attraverso ricordi, amicizia e scoperta."
+      }
+    };
+
+    document.querySelectorAll(".choice").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".choice").forEach(item => {
+          item.classList.remove("selected");
+        });
+
+        button.classList.add("selected");
+
+        const anime = recommendations[button.dataset.result];
+        const result = document.getElementById("result");
+
+        result.innerHTML = "<strong>✦ Il tuo anime consigliato: " +
+          anime.title + "</strong><br>" + anime.text;
+
+        result.hidden = false;
+      });
+    });
+  </script>
+</body>
+</html>
