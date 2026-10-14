@@ -70,6 +70,22 @@ input::placeholder {color:#9b91ac}
   display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden
 }
 .anime-link {display:inline-block;margin-top:12px;color:var(--purple);font-size:13px}
+.favorite-btn {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid #a78bfa66;
+  border-radius: 9px;
+  background: #a78bfa14;
+  color: var(--pink);
+  font-size: 14px;
+  cursor: pointer;
+}
+.favorite-btn:hover {
+  background: #a78bfa30;
+}
+
 .status {padding:20px 0;color:var(--muted);line-height:1.7}
 #more {margin-top:24px}
 .quiz {
@@ -99,6 +115,7 @@ footer {text-align:center;padding:28px;color:var(--muted);border-top:1px solid #
   <nav>
     <a href="#home">Home</a>
     <a href="#catalogo">Catalogo</a>
+    <a href="#preferiti">♡ Preferiti</a>
     <a href="#quiz">Anime quiz</a>
   </nav>
 </header>
@@ -128,6 +145,15 @@ footer {text-align:center;padding:28px;color:var(--muted);border-top:1px solid #
   <button id="more" class="btn alt" hidden>Carica altri anime</button>
 </section>
 
+<section id="preferiti">
+  <h2>♡ I miei preferiti</h2>
+  <p class="sub">Gli anime che hai scelto di custodire nel tuo cuore.</p>
+  <div id="favorites" class="grid"></div>
+  <p id="favorites-empty" class="status">
+    Non hai ancora aggiunto anime ai preferiti. 💜
+  </p>
+</section>
+
 <section id="quiz">
   <div class="quiz">
     <div class="eyebrow">Anime finder</div>
@@ -148,6 +174,70 @@ footer {text-align:center;padding:28px;color:var(--muted);border-top:1px solid #
 
 <script>
 const endpoint = "https://graphql.anilist.co";
+
+let favoriteAnime = JSON.parse(
+  localStorage.getItem("yoruFavorites") || "[]"
+);
+
+const favoritesContainer = document.getElementById("favorites");
+const favoritesEmpty = document.getElementById("favorites-empty");
+
+function saveFavorites() {
+  localStorage.setItem(
+    "yoruFavorites",
+    JSON.stringify(favoriteAnime)
+  );
+}
+
+function toggleFavorite(id) {
+  const saved = favoriteAnime.find(anime => anime.id === id);
+
+  if (saved) {
+    favoriteAnime = favoriteAnime.filter(anime => anime.id !== id);
+  } else {
+    const anime = allAnime.find(item => item.id === id);
+    if (!anime) return;
+    favoriteAnime.push(anime);
+  }
+
+  saveFavorites();
+  renderFavorites();
+  renderCatalog();
+}
+
+function renderFavorites() {
+  favoritesContainer.innerHTML = favoriteAnime.map(anime => {
+    const title = anime.title.english || anime.title.romaji || "Anime";
+    const cover = anime.coverImage.extraLarge || anime.coverImage.large || "";
+    const description = plainDescription(anime.description);
+    const genres = (anime.genres || []).slice(0, 4).join(" · ");
+
+    return `
+      <article class="card">
+        <img class="cover" src="${safeText(cover)}"
+          alt="Copertina di ${safeText(title)}" loading="lazy">
+        <div class="info">
+          <h3>${safeText(title)}</h3>
+          <div class="genres">${safeText(genres)}</div>
+          <p class="description">${safeText(description || "Descrizione non disponibile.")}</p>
+          <a class="anime-link" href="${safeText(anime.siteUrl)}"
+            target="_blank" rel="noopener noreferrer">Scopri su AniList ↗</a>
+          <button class="favorite-btn" data-favorite-id="${anime.id}">
+            ♥ Rimuovi dai preferiti
+          </button>
+        </div>
+      </article>`;
+  }).join("");
+
+  favoritesEmpty.hidden = favoriteAnime.length > 0;
+}
+
+document.addEventListener("click", event => {
+  const button = event.target.closest(".favorite-btn");
+  if (!button) return;
+  toggleFavorite(Number(button.dataset.favoriteId));
+});
+
 const catalog = document.getElementById("catalog");
 const statusBox = document.getElementById("status");
 const searchInput = document.getElementById("search");
@@ -335,6 +425,12 @@ function renderCatalog() {
           <p class="description">${safeText(description || "Descrizione non disponibile.")}</p>
           <a class="anime-link" href="${safeText(anime.siteUrl)}"
             target="_blank" rel="noopener noreferrer">Scopri su AniList ↗</a>
+            <button class="favorite-btn" data-favorite-id="${anime.id}">
+  ${favoriteAnime.some(item => item.id === anime.id)
+    ? "♥ Rimuovi dai preferiti"
+    : "♡ Aggiungi ai preferiti"}
+</button>
+
         </div>
       </article>`;
   }).join("");
@@ -369,7 +465,7 @@ document.querySelectorAll(".choice").forEach(button => {
       "</strong><br>" + safeText(result[1]);
   });
 });
-
+renderFavorites();
 loadAnime(true);
 </script>
 </body>
