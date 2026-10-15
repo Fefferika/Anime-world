@@ -75,8 +75,13 @@
                     anime.image ||
                     "";
 
-      const description = anime.description || "Descrizione non disponibile.";
-      const cleanDescription = description.replace(/<[^>]*>/g, "");
+      
+const description = anime.description || "Descrizione non disponibile.";
+const cleanDescription = description
+  .replace(/<[^>]*>/g, "")
+  .replace(/~!/g, "")
+  .replace(/!~/g, "")
+  .trim();
 
       content.innerHTML = `
         <div class="anime">
