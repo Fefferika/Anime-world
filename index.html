@@ -300,36 +300,39 @@ function plainDescription(text) {
 }
 
   
-const translationCache = new Map();
+
+let translatorPromise;
 
 async function translateToItalian(text) {
   const original = plainDescription(text).slice(0, 450);
 
   if (!original) return "Descrizione non disponibile.";
-  if (translationCache.has(original)) {
-    return translationCache.get(original);
-  }
 
   try {
-    const url =
-      "https://api.mymemory.translated.net/get?q=" +
-      encodeURIComponent(original) +
-      "&langpair=en|it";
-
-    const response = await fetch(url);
-    const data = await response.json();
-
-    const translated = data.responseData?.translatedText;
-
-    if (translated) {
-      translationCache.set(original, translated);
-      return translated;
+    if (!translatorPromise) {
+      translatorPromise = import(
+        "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2"
+      ).then(({ pipeline, env }) => {
+        env.allowLocalModels = false;
+        return pipeline(
+          "translation",
+          "Xenova/opus-mt-en-it"
+        );
+      });
     }
-  } catch (error) {
-    console.log("Traduzione temporaneamente non disponibile.");
-  }
 
-  return original;
+    const translator = await translatorPromise;
+    const result = await translator(original, {
+      max_new_tokens: 256
+    });
+
+    const translated = result?.[0]?.translation_text;
+
+    return translated || original;
+  } catch (error) {
+    console.error("Traduzione non disponibile:", error);
+    return original;
+  }
 }
 
 
