@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dettagli Anime | Yoru Anime</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #fff5fa;
+      color: #493344;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 24px;
+      background: white;
+      border-radius: 18px;
+    }
+    .anime {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    img {
+      width: 220px;
+      max-width: 100%;
+      border-radius: 14px;
+      object-fit: cover;
+    }
+    .info {
+      flex: 1;
+      min-width: 220px;
+    }
+    .back {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #b34d83;
+      text-decoration: none;
+    }
+    h1 { color: #b34d83; }
+    .description {
+      line-height: 1.7;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <a class="back" href="index.html">← Torna a Yoru Anime</a>
+    <div id="content">Caricamento informazioni...</div>
+  </main>
+
+  <script>
+    const anime = JSON.parse(
+      localStorage.getItem("selectedAnime") || "null"
+    );
+    const content = document.getElementById("content");
+
+    if (!anime) {
+      content.innerHTML =
+        "<h1>Anime non trovato</h1><p>Torna al catalogo e seleziona un anime.</p>";
+    } else {
+      const title = anime.title?.userPreferred ||
+                    anime.title?.romaji ||
+                    anime.title?.english ||
+                    anime.name ||
+                    "Anime";
+
+      const image = anime.coverImage?.extraLarge ||
+                    anime.coverImage?.large ||
+                    anime.image ||
+                    "";
+
+      const description = anime.description || "Descrizione non disponibile.";
+      const cleanDescription = description.replace(/<[^>]*>/g, "");
+
+      content.innerHTML = `
+        <div class="anime">
+          ${image ? `<img src="${image}" alt="Copertina di ${title}">` : ""}
+          <div class="info">
+            <h1>${title}</h1>
+            <p><strong>Anno:</strong> ${anime.seasonYear || anime.year || "Non disponibile"}</p>
+            <p><strong>Episodi:</strong> ${anime.episodes || "Non disponibili"}</p>
+            <p><strong>Voto:</strong> ${anime.averageScore ? anime.averageScore + "/100" : "Non disponibile"}</p>
+            <p><strong>Generi:</strong> ${anime.genres?.join(", ") || "Non disponibili"}</p>
+          </div>
+        </div>
+        <h2>Trama</h2>
+        <p class="description"></p>
+      `;
+
+      content.querySelector(".description").textContent = cleanDescription;
+    }
+  </script>
+</body>
+</html>
