@@ -439,9 +439,11 @@ function renderCatalog() {
           <p class="description">${safeText(description || "Descrizione non disponibile.")}</p>
           <a class="anime-link" href="${safeText(anime.siteUrl)}"
             target="_blank" rel="noopener noreferrer">Scopri su AniList ↗</a>
-                  <button class="favorite-btn" data-details-id="${anime.id}">
-        ✨ Scopri tutti i dettagli
-      </button>
+                  
+<button class="details-btn" data-anime-id="${anime.id}">
+  ✨ Scopri tutti i dettagli
+</button>
+
             <button class="favorite-btn" data-favorite-id="${anime.id}">
   ${favoriteAnime.some(item => item.id === anime.id)
     ? "♥ Rimuovi dai preferiti"
