@@ -237,6 +237,20 @@ document.addEventListener("click", event => {
   if (!button) return;
   toggleFavorite(Number(button.dataset.favoriteId));
 });
+  
+document.addEventListener("click", event => {
+  const button = event.target.closest(".details-btn");
+  if (!button) return;
+
+  const animeId = Number(button.dataset.animeId);
+  const anime = animeList.find(item => item.id === animeId);
+
+  if (!anime) return;
+
+  localStorage.setItem("selectedAnime", JSON.stringify(anime));
+  window.open("anime-details.html", "_blank");
+});
+
 
 const catalog = document.getElementById("catalog");
 const statusBox = document.getElementById("status");
@@ -425,6 +439,9 @@ function renderCatalog() {
           <p class="description">${safeText(description || "Descrizione non disponibile.")}</p>
           <a class="anime-link" href="${safeText(anime.siteUrl)}"
             target="_blank" rel="noopener noreferrer">Scopri su AniList ↗</a>
+                  <button class="favorite-btn" data-details-id="${anime.id}">
+        ✨ Scopri tutti i dettagli
+      </button>
             <button class="favorite-btn" data-favorite-id="${anime.id}">
   ${favoriteAnime.some(item => item.id === anime.id)
     ? "♥ Rimuovi dai preferiti"
