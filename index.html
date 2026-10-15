@@ -248,7 +248,7 @@ document.addEventListener("click", event => {
   if (!anime) return;
 
   localStorage.setItem("selectedAnime", JSON.stringify(anime));
-  window.open("anime-details.html", "_blank");
+  window.location.href = "anime-details.html";
 });
 
 
