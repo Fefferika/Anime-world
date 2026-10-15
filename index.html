@@ -375,11 +375,7 @@ async function loadAnime(reset = false) {
     const result = data.data.Page;
     const items = result.media || [];
     
-await Promise.all(items.map(async (anime) => {
-  if (anime.description) {
-    anime.description = await translateToItalian(anime.description);
-  }
-}));
+
 
     hasMore = result.pageInfo.hasNextPage;
     allAnime = reset ? items : allAnime.concat(items);
