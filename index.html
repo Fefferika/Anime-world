@@ -238,17 +238,63 @@ document.addEventListener("click", event => {
   toggleFavorite(Number(button.dataset.favoriteId));
 });
   
+
 document.addEventListener("click", event => {
   const button = event.target.closest(".details-btn");
-  if (!button) return;
 
-  const animeId = Number(button.dataset.animeId);
-  const anime = allAnime.find(item => item.id === animeId);
+  if (button) {
+    const animeId = Number(button.dataset.animeId);
+    const anime = allAnime.find(item => item.id === animeId);
 
-  if (!anime) return;
+    if (!anime) return;
 
-  localStorage.setItem("selectedAnime", JSON.stringify(anime));
-  window.location.href = "anime-details.html";
+    const modal = document.getElementById("anime-modal");
+    const modalBody = document.getElementById("anime-modal-body");
+
+    const title = anime.title?.romaji ||
+                  anime.title?.english ||
+                  "Anime";
+
+    const image = anime.coverImage?.extraLarge ||
+                  anime.coverImage?.large ||
+                  "";
+
+    const description = (anime.description || "Descrizione non disponibile.")
+      .replace(/<[^>]*>/g, "")
+      .replace(/~!/g, "")
+      .replace(/!~/g, "")
+      .trim();
+
+    modalBody.innerHTML = `
+      <div class="anime">
+        ${image ? `<img src="${image}" alt="Copertina">` : ""}
+        <div class="info">
+          <h1></h1>
+          <p><strong>Anno:</strong> ${anime.startDate?.year || "Non disponibile"}</p>
+          <p><strong>Episodi:</strong> ${anime.episodes || "Non disponibili"}</p>
+          <p><strong>Voto:</strong> ${anime.averageScore ? anime.averageScore + "/100" : "Non disponibile"}</p>
+          <p><strong>Generi:</strong> ${(anime.genres || []).join(", ") || "Non disponibili"}</p>
+        </div>
+      </div>
+      <h2>Trama</h2>
+      <p class="description"></p>
+    `;
+
+    modalBody.querySelector("h1").textContent = title;
+    modalBody.querySelector(".description").textContent = description;
+
+    modal.style.display = "flex";
+    return;
+  }
+
+  if (event.target.closest("#close-anime-modal")) {
+    document.getElementById("anime-modal").style.display = "none";
+    return;
+  }
+
+  if (event.target.id === "anime-modal") {
+    event.target.style.display = "none";
+  }
 });
 
 
