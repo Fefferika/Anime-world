@@ -107,6 +107,66 @@ footer {text-align:center;padding:28px;color:var(--muted);border-top:1px solid #
   section {padding:38px 5%}
 }
 @media(max-width:380px) {.tools {grid-template-columns:1fr}}
+
+.anime-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(10, 8, 20, 0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.anime-modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 850px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #1c1930;
+  color: #fff;
+  border: 1px solid #8b70d6;
+  border-radius: 20px;
+  padding: 28px;
+  box-sizing: border-box;
+}
+
+.close-modal {
+  position: sticky;
+  top: 0;
+  float: right;
+  font-size: 22px;
+  color: white;
+  background: #6d4bc3;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.anime-modal-content img {
+  max-width: 220px;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+.anime-modal-content .anime {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.anime-modal-content .description {
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
 </style>
 </head>
 <body>
@@ -530,5 +590,13 @@ document.querySelectorAll(".choice").forEach(button => {
 renderFavorites();
 loadAnime(true);
 </script>
+
+<div id="anime-modal" class="anime-modal" style="display:none;">
+  <div class="anime-modal-content">
+    <button id="close-anime-modal" class="close-modal" aria-label="Chiudi">✕</button>
+    <div id="anime-modal-body"></div>
+  </div>
+</div>
+  
 </body>
 </html>
