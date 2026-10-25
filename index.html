@@ -562,7 +562,7 @@ function renderCatalog() {
     getTitle(a).localeCompare(getTitle(b))
   );
 
-  for (const anime of sortedAnime) {
+  for (const anime of allAnime) {
     if (visited.has(anime.id)) continue;
 
     const group = [];
