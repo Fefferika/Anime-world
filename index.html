@@ -210,6 +210,7 @@ footer {text-align:center;padding:28px;color:var(--muted);border-top:1px solid #
       <option value="POPULARITY_DESC">⭐ Più popolari</option>
       <option value="START_DATE_DESC">🆕 Più recenti</option>
       <option value="START_DATE">📼 Più vecchi</option>
+      <option value="upcoming">🔮 Annunciati / Futuri</option>
     </select>
   </div>
 
@@ -388,10 +389,10 @@ let requestNumber = 0;
 
 
 const query = `
-query ($page: Int, $search: String, $sort: [MediaSort]) {
+query ($page: Int, $search: String, $sort: [MediaSort], $status: MediaStatus) {
   Page(page: $page, perPage: 50) {
    pageInfo { hasNextPage }
-    media(type: ANIME, search: $search, sort: $sort, isAdult: false) {
+    media(type: ANIME, search: $search, sort: $sort, status: $status, isAdult: false) {
       id
       title { english romaji }
       description(asHtml: false)
@@ -400,6 +401,7 @@ query ($page: Int, $search: String, $sort: [MediaSort]) {
       genres
       coverImage { large extraLarge }
       startDate { year }
+      status
       siteUrl
       relations {
        edges {
@@ -491,14 +493,17 @@ async function loadAnime(reset = false) {
         "Content-Type": "application/json",
         "Accept": "application/json"
       },
-      body: JSON.stringify({
+  
+body: JSON.stringify({
   query,
   variables: {
     page,
     search: term || null,
-    sort: [sortSelect.value]
+    sort: [sortSelect.value === "upcoming" ? "POPULARITY_DESC" : sortSelect.value],
+    status: sortSelect.value === "upcoming" ? "NOT_YET_RELEASED" : null
   }
 })
+
     });
 
     if (!response.ok) throw new Error("Servizio momentaneamente non disponibile");
@@ -657,9 +662,29 @@ function renderCatalog() {
 
   const orderedAnime = groups.flat();
 
-  const filtered = orderedAnime.filter(anime =>
-    !selectedGenre || (anime.genres || []).includes(selectedGenre)
-  );
+  
+const filtered = orderedAnime.filter(anime => {
+  const matchesGenre =
+    !selectedGenre || (anime.genres || []).includes(selectedGenre);
+
+  if (!matchesGenre) return false;
+
+  if (sortSelect.value === "upcoming") {
+    return anime.status === "NOT_YET_RELEASED" &&
+      (!anime.startDate?.year || anime.startDate.year >= 2027);
+  }
+
+  if (
+    sortSelect.value === "START_DATE_DESC" ||
+    sortSelect.value === "START_DATE"
+  ) {
+    return anime.status === "FINISHED" ||
+      anime.status === "RELEASING";
+  }
+
+  return true;
+});
+
   catalog.innerHTML = filtered.map(anime => {
     const title = anime.title.english || anime.title.romaji || "Anime";
     const cover = anime.coverImage.extraLarge || anime.coverImage.large || "";
