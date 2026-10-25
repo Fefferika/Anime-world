@@ -378,7 +378,7 @@ let requestNumber = 0;
 
 const query = `
 query ($page: Int, $search: String) {
-  Page(page: $page, perPage: 24) {
+  Page(page: $page, perPage: 100) {
     pageInfo { hasNextPage }
     media(type: ANIME, search: $search, sort: TITLE_ROMAJI, isAdult: false) {
       id
