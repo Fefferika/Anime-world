@@ -376,6 +376,7 @@ const catalog = document.getElementById("catalog");
 const statusBox = document.getElementById("status");
 const searchInput = document.getElementById("search");
 const genreSelect = document.getElementById("genre");
+const sortSelect = document.getElementById("sort");
 const moreButton = document.getElementById("more");
 
 let page = 1;
@@ -385,11 +386,12 @@ let loading = false;
 let hasMore = true;
 let requestNumber = 0;
 
+
 const query = `
-query ($page: Int, $search: String) {
-  Page(page: $page, perPage: 100) {
-    pageInfo { hasNextPage }
-    media(type: ANIME, search: $search, sort: TITLE_ROMAJI, isAdult: false) {
+query ($page: Int, $search: String, $sort: [MediaSort]) {
+  Page(page: $page, perPage: 50) {
+   pageInfo { hasNextPage }
+    media(type: ANIME, search: $search, sort: $sort, isAdult: false) {
       id
       title { english romaji }
       description(asHtml: false)
@@ -490,9 +492,13 @@ async function loadAnime(reset = false) {
         "Accept": "application/json"
       },
       body: JSON.stringify({
-        query,
-        variables: { page, search: term || null }
-      })
+  query,
+  variables: {
+    page,
+    search: term || null,
+    sort: [sortSelect.value]
+  }
+})
     });
 
     if (!response.ok) throw new Error("Servizio momentaneamente non disponibile");
