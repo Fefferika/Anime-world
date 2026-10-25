@@ -586,12 +586,57 @@ function renderCatalog() {
       }
     }
 
-    group.sort((a, b) => {
-      const aTitle = getTitle(a);
-      const bTitle = getTitle(b);
-      return aTitle.localeCompare(bTitle);
-    });
+        const groupIds = new Set(group.map(anime => anime.id));
+    const orderedGroup = [];
+    const added = new Set();
 
+    function addSeason(anime) {
+      if (!anime || added.has(anime.id)) return;
+
+      added.add(anime.id);
+      orderedGroup.push(anime);
+
+      const sequels = (anime.relations?.edges || [])
+        .filter(edge =>
+          edge.relationType === "SEQUEL" &&
+          groupIds.has(edge.node.id)
+        )
+        .map(edge => animeById.get(edge.node.id))
+        .filter(Boolean)
+        .sort((a, b) =>
+          (a.startDate?.year || 9999) -
+          (b.startDate?.year || 9999)
+        );
+
+      for (const sequel of sequels) {
+        addSeason(sequel);
+      }
+    }
+
+    const firstSeasons = group
+      .filter(anime =>
+        !(anime.relations?.edges || []).some(edge =>
+          edge.relationType === "PREQUEL" &&
+          groupIds.has(edge.node.id)
+        )
+      )
+      .sort((a, b) =>
+        (a.startDate?.year || 9999) -
+        (b.startDate?.year || 9999)
+      );
+
+    for (const anime of firstSeasons) {
+      addSeason(anime);
+    }
+
+    for (const anime of [...group].sort((a, b) =>
+      (a.startDate?.year || 9999) -
+      (b.startDate?.year || 9999)
+    )) {
+      addSeason(anime);
+    }
+
+    group.splice(0, group.length, ...orderedGroup);
     groups.push(group);
   }
 
