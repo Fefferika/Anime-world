@@ -703,6 +703,7 @@ searchInput.addEventListener("input", () => {
   searchTimer = setTimeout(() => loadAnime(true), 500);
 });
 genreSelect.addEventListener("change", renderCatalog);
+  sortSelect.addEventListener("change", () => loadAnime(true));
 moreButton.addEventListener("click", () => loadAnime(false));
 
 const recommendations = {
