@@ -380,7 +380,7 @@ const query = `
 query ($page: Int, $search: String) {
   Page(page: $page, perPage: 24) {
     pageInfo { hasNextPage }
-    media(type: ANIME, search: $search, sort: POPULARITY_DESC, isAdult: false) {
+    media(type: ANIME, search: $search, sort: TITLE_ROMAJI, isAdult: false) {
       id
       title { english romaji }
       description(asHtml: false)
