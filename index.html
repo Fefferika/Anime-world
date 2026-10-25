@@ -663,6 +663,7 @@ function renderCatalog() {
   const orderedAnime = groups.flat();
 
   
+
 const filtered = orderedAnime.filter(anime => {
   const matchesGenre =
     !selectedGenre || (anime.genres || []).includes(selectedGenre);
@@ -673,6 +674,10 @@ const filtered = orderedAnime.filter(anime => {
     return anime.status === "NOT_YET_RELEASED" &&
       (!anime.startDate?.year || anime.startDate.year >= 2027);
   }
+
+  return true;
+});
+
 
   if (
     sortSelect.value === "START_DATE_DESC" ||
