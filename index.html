@@ -532,11 +532,74 @@ function updateGenres() {
 }
 
 function renderCatalog() {
-  const selectedGenre = genreSelect.value;
-  const filtered = allAnime.filter(anime =>
-    !selectedGenre || (anime.genres || []).includes(selectedGenre)
+    const selectedGenre = genreSelect.value;
+
+  const animeById = new Map(
+    allAnime.map(anime => [anime.id, anime])
   );
 
+  const visited = new Set();
+  const groups = [];
+
+  function getTitle(anime) {
+    return (anime.title?.english || anime.title?.romaji || "Anime")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLocaleLowerCase();
+  }
+
+  function getRelatedIds(anime) {
+    return (anime.relations?.edges || [])
+      .filter(edge =>
+        edge.relationType === "SEQUEL" ||
+        edge.relationType === "PREQUEL"
+      )
+      .map(edge => edge.node.id)
+      .filter(id => animeById.has(id));
+  }
+
+  const sortedAnime = [...allAnime].sort((a, b) =>
+    getTitle(a).localeCompare(getTitle(b))
+  );
+
+  for (const anime of sortedAnime) {
+    if (visited.has(anime.id)) continue;
+
+    const group = [];
+    const queue = [anime.id];
+
+    while (queue.length) {
+      const id = queue.shift();
+
+      if (visited.has(id)) continue;
+      visited.add(id);
+
+      const current = animeById.get(id);
+      if (!current) continue;
+
+      group.push(current);
+
+      for (const relatedId of getRelatedIds(current)) {
+        if (!visited.has(relatedId)) {
+          queue.push(relatedId);
+        }
+      }
+    }
+
+    group.sort((a, b) => {
+      const aTitle = getTitle(a);
+      const bTitle = getTitle(b);
+      return aTitle.localeCompare(bTitle);
+    });
+
+    groups.push(group);
+  }
+
+  const orderedAnime = groups.flat();
+
+  const filtered = orderedAnime.filter(anime =>
+    !selectedGenre || (anime.genres || []).includes(selectedGenre)
+  );
   catalog.innerHTML = filtered.map(anime => {
     const title = anime.title.english || anime.title.romaji || "Anime";
     const cover = anime.coverImage.extraLarge || anime.coverImage.large || "";
