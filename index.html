@@ -198,12 +198,21 @@ footer {text-align:center;padding:28px;color:var(--muted);border-top:1px solid #
   <h2>✦ Catalogo anime</h2>
   <p class="sub">Cerca un titolo oppure esplora gli anime più popolari.</p>
 
+  
   <div class="tools">
     <input id="search" type="search" placeholder="🔎 Cerca un anime..." aria-label="Cerca anime">
+
     <select id="genre" aria-label="Filtra per genere">
       <option value="">Tutti i generi</option>
     </select>
+
+    <select id="sort" aria-label="Ordina gli anime">
+      <option value="POPULARITY_DESC">⭐ Più popolari</option>
+      <option value="START_DATE_DESC">🆕 Più recenti</option>
+      <option value="START_DATE">📼 Più vecchi</option>
+    </select>
   </div>
+
 
   <div id="status" class="status">🌙 Sto preparando il catalogo...</div>
   <div id="catalog" class="grid"></div>
