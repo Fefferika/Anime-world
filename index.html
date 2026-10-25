@@ -390,6 +390,14 @@ query ($page: Int, $search: String) {
       coverImage { large extraLarge }
       startDate { year }
       siteUrl
+      relations {
+       edges {
+        relationType
+        node {
+          id
+          }
+        }
+      }
     }
   }
 }`;
